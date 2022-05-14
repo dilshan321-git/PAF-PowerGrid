@@ -6,6 +6,9 @@ import conn.DB_Connect;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class PowerConsumption {
 
 	private int results;
@@ -44,12 +47,15 @@ public class PowerConsumption {
 			
 			while (dataSet.next()) {
 				
+				
+				String button = "<button type='button1' onclick='edit("+dataSet.getString(1)+")' class='btn btn-primary'>Edit</button> <button type='button' onclick='deletes("+dataSet.getString(1)+")' class='btn btn-warning'>Delete</button>";
+				
 				table = table+"<tr><td style='border: 1px solid black;border-radius: 10px;'>"+dataSet.getString(1)+"</td>"
 						+ "<td style='border: 1px solid black;border-radius: 10px;'>"+dataSet.getString(2)+"</td>"
 						+ "<td style='border: 1px solid black;border-radius: 10px;'>"+dataSet.getString(3)+"</td>"
-						+ "<td style='border: 1px solid black;border-radius: 10px;'>"+dataSet.getString(4)+"</td>"
-						+ "<td style='border: 1px solid black;border-radius: 10px;'><button type='button'>Edit</button></td>"
-						+ "<td style='border: 1px solid black;border-radius: 10px;'><button type='button'>Delete</button></td>"
+						+ "<td style='border: 1px solid black;border-radius: 10px;'>"+dataSet.getString(4)+"</td>"		
+						
+						+ "<td >" +button+ "</td>"
 					  + "</tr>";
 				
 			}
@@ -125,6 +131,40 @@ public class PowerConsumption {
 			System.out.println(e.getMessage());
 			setResults(0);
 		}
+		
 	}
-	
+		public JSONObject getOnePower(int id) throws JSONException {
+			Connection connection;
+			PreparedStatement preparedStatement;
+			JSONObject json = new JSONObject();
+			
+			try {
+				connection = DB_Connect.getDB();
+				
+				preparedStatement = connection.prepareStatement("SELECT * FROM power where id=?");
+				preparedStatement.setInt(1, id);
+				ResultSet rs = preparedStatement.executeQuery();
+				
+		
+
+				while(rs.next())
+				{
+					json.put("id", rs.getString(1));
+					json.put("usage", rs.getString(2));
+					json.put("unit_type", rs.getString(3));
+					json.put("description", rs.getString(4));
+					
+				}
+				
+			}catch (ClassNotFoundException | SQLException  e) {
+				setResults(0);
+			}
+			return json;
+		}
+
+
+
+
 }
+	
+
