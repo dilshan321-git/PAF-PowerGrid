@@ -1,3 +1,4 @@
+
 package controller;
 
 import java.util.ArrayList;
@@ -6,6 +7,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import com.google.gson.*;
+
+import org.json.JSONException;
 import org.json.simple.*;
 
 import model.*;
@@ -17,6 +20,8 @@ import org.jsoup.nodes.Document;
 
 @Path("/power")
 public class Power {
+	
+	
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -113,4 +118,16 @@ public class Power {
 		return power.get_Power();
 	}
 	
+
+
+    @POST
+    @Path("/get")
+    @Produces(MediaType.TEXT_HTML)
+    public String viewOne(String app_text) throws NumberFormatException, JSONException
+    {
+    	JsonObject app = new JsonParser().parse(app_text).getAsJsonObject();
+    	
+    	PowerConsumption power = new PowerConsumption();
+    	return power.getOnePower(Integer.parseInt(app.get("id").getAsString())).toString();
+    }
 }
